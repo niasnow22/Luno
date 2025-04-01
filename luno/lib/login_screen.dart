@@ -1,11 +1,15 @@
+// ----------------------------
+// login_screen.dart
+// ----------------------------
+
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'signup_screen.dart';
 import 'home_screen.dart';
-import '../db/user_database.dart'; // Adjust the import path if necessary
 import '../models/user.dart';
+import '../db/sembast_user_database.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
@@ -14,11 +18,9 @@ class LoginScreen extends StatelessWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final Color accentColor = const Color(0xFF00C28D);
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  final UserDatabase db = UserDatabase();
+  final SembastUserDatabase db = SembastUserDatabase();
 
   void handleLogin() async {
     final email = emailController.text.trim();
@@ -34,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final user = await db.getUser(email, password);
 
     if (user != null) {
+      await db.logLogin(user.email);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen(name: user.name)),
@@ -56,13 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.blur_on,
-                  size: 64,
-                  color: accentColor,
-                ),
+                Icon(Icons.blur_on, size: 64, color: accentColor),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   "Login",
                   style: TextStyle(
                     fontSize: 28,
@@ -93,9 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      // Add forgot password logic if needed
-                    },
+                    onPressed: () {},
                     child: Text(
                       'Forgot Password?',
                       style: TextStyle(color: accentColor),
@@ -108,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -119,39 +116,41 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Icon(Icons.language, size: 28), // Placeholder for Google
+                    Icon(Icons.language, size: 28),
                     SizedBox(width: 16),
                     Text('or'),
                     SizedBox(width: 16),
-                    Icon(Icons.facebook, size: 28), // Placeholder for Facebook
+                    Icon(Icons.facebook, size: 28),
                   ],
                 ),
                 const SizedBox(height: 24),
-                TextButton(
-                  onPressed: () {}, // Needed to enable the recognizer
-                  child: Text.rich(
-                    TextSpan(
-                      text: "Don't have an Account? - ",
-                      style: const TextStyle(color: Colors.black),
-                      children: [
-                        TextSpan(
-                          text: 'Sign up',
-                          style: TextStyle(color: accentColor),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const SignupScreen()),
-                              );
-                            },
-                        ),
-                      ],
-                    ),
+                Text.rich(
+                  TextSpan(
+                    text: "Don't have an Account? ",
+                    style: const TextStyle(color: Colors.black),
+                    children: [
+                      TextSpan(
+                        text: 'Sign up',
+                        style: TextStyle(color: accentColor),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignupScreen()),
+                            );
+                          },
+                      ),
+                    ],
                   ),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Guest login logic here
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(name: 'Guest'),
+                      ),
+                    );
                   },
                   child: Text(
                     'Continue as a Guest',
@@ -166,3 +165,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

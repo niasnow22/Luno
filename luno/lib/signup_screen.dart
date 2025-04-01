@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; 
+import 'login_screen.dart';
 import '../models/user.dart';
-import '../db/user_database.dart'; // Make sure this path is correct
+import '../db/sembast_user_database.dart'; // updated import
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -19,7 +19,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final UserDatabase db = UserDatabase();
+  final SembastUserDatabase db = SembastUserDatabase(); // updated to sembast
 
   void handleSignup() async {
     final name = nameController.text.trim();
@@ -45,7 +45,7 @@ class _SignupScreenState extends State<SignupScreen> {
     try {
       await db.insertUser(newUser);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created! Please Login')),
+        const SnackBar(content: Text('Account created! Please login.')),
       );
       Navigator.pushReplacement(
         context,
@@ -53,7 +53,7 @@ class _SignupScreenState extends State<SignupScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email already exists')),
+        const SnackBar(content: Text('Email already exists.')),
       );
     }
   }
@@ -69,13 +69,9 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.blur_on,
-                  size: 64,
-                  color: accentColor,
-                ),
+                Icon(Icons.blur_on, size: 64, color: accentColor),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Sign-up',
                   style: TextStyle(
                     fontSize: 28,
@@ -89,7 +85,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   decoration: InputDecoration(
                     hintText: 'Name',
                     prefixIcon: Icon(Icons.person_outline, color: accentColor),
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -98,7 +94,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   decoration: InputDecoration(
                     hintText: 'Email',
                     prefixIcon: Icon(Icons.email_outlined, color: accentColor),
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -108,7 +104,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   decoration: InputDecoration(
                     hintText: 'Password',
                     prefixIcon: Icon(Icons.lock_outline, color: accentColor),
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -145,11 +141,11 @@ class _SignupScreenState extends State<SignupScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Icon(Icons.language, size: 28), // Google placeholder
+                    Icon(Icons.language, size: 28),
                     SizedBox(width: 16),
                     Text('or'),
                     SizedBox(width: 16),
-                    Icon(Icons.facebook, size: 28), // Facebook placeholder
+                    Icon(Icons.facebook, size: 28),
                   ],
                 ),
                 const SizedBox(height: 24),
