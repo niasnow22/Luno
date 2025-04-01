@@ -6,6 +6,8 @@ void main() {
 }
 
 class Luno extends StatelessWidget{
+  const Luno({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
