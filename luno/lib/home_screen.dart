@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'admin_page.dart';
-import 'account_page.dart'; // Make sure this file exists
+import 'account_page.dart'; // Ensure this file exists and contains AccountPage
 
 class HomeScreen extends StatelessWidget {
   final String name;
