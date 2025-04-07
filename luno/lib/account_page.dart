@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'home_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   final String name;
@@ -13,7 +14,7 @@ class AccountScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,6 +88,30 @@ class AccountScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: accentColor,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        currentIndex: 4, // Account tab selected
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen(name: name)),
+            );
+          } else {
+            // Handle other navigation taps if necessary
+            print('Tapped nav index: \$index');
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorites'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
+        ],
       ),
     );
   }
