@@ -3,14 +3,15 @@
 // ----------------------------
 
 import 'package:flutter/material.dart';
-import 'package:luno/sales_screen.dart';
+import 'package:luno/explore_pages/sales_items/sales_screen.dart';
 import 'search_screen.dart';
-import 'shirts_screen.dart';
-import 'pants_screen.dart';
-import 'dress_screen.dart';
-import 'shoes_screen.dart';
+import 'explore_pages/shirts_items/shirts_screen.dart';
+import 'explore_pages/pants_items/pants_screen.dart';
+import 'explore_pages/dress_items/dress_screen.dart';
+import 'explore_pages/shoes_items/shoes_screen.dart';
 import 'admin_page.dart';
 import 'account_page.dart';
+import 'shopping_cart.dart';
 
 class HomeScreen extends StatelessWidget {
   final String name;
@@ -168,22 +169,34 @@ class HomeScreen extends StatelessWidget {
   selectedItemColor: accentColor,
   unselectedItemColor: Colors.grey,
   showUnselectedLabels: true,
-  currentIndex: 0, // Change this per screen for highlighting
+  currentIndex: 0, // Explore tab
   onTap: (index) {
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SearchScreen(name: name),
-        ),
-      );
-    } else if (index == 4) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AccountScreen(name: name),
-        ),
-      );
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => SearchScreen(name: name)),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ShoppingCart(name: name)),
+        );
+        break;
+      case 3:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Favorites coming soon')),
+        );
+        break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => AccountScreen(name: name)),
+        );
+        break;
     }
   },
   items: const [
@@ -194,6 +207,7 @@ class HomeScreen extends StatelessWidget {
     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
   ],
 ),
+
 
     );
   }

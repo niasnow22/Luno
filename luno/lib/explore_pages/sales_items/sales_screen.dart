@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:luno/dress_screen.dart';
-import 'home_screen.dart';
-import 'account_page.dart';
-import 'sales_screen.dart';
-import 'shirts_screen.dart';
-import 'pants_screen.dart';
+import 'package:luno/explore_pages/dress_items/dress_screen.dart';
+import '../../home_screen.dart';
+import '../../account_page.dart';
+import '../shirts_items/shirts_screen.dart';
+import '../pants_items/pants_screen.dart';
+import '../shoes_items/shoes_screen.dart';
 
 class Product {
   final String name;
@@ -20,16 +20,16 @@ class Product {
   });
 }
 
-class ShoesScreen extends StatefulWidget {
+class SalesScreen extends StatefulWidget {
   final String name;
 
-  const ShoesScreen({super.key, required this.name});
+  const SalesScreen({super.key, required this.name});
 
   @override
-  State<ShoesScreen> createState() => _ShoesScreenState();
+  State<SalesScreen> createState() => _SalesScreenState();
 }
 
-class _ShoesScreenState extends State<ShoesScreen> {
+class _SalesScreenState extends State<SalesScreen> {
   String _selectedSort = 'Popularity';
   RangeValues _selectedPriceRange = const RangeValues(0, 100);
 
@@ -46,12 +46,12 @@ class _ShoesScreenState extends State<ShoesScreen> {
   void initState() {
     super.initState();
     products = List.generate(
-      10,
+      4,
       (index) => Product(
-        name: 'Shoe ${index + 1}',
-        price: 30.0 + index * 7,
-        dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 85 - index * 5,
+        name: 'Sale Item ${index + 1}',
+        price: 15.0 + index * 5,
+        dateAdded: DateTime.now().subtract(Duration(days: index)),
+        popularity: 100 - index * 8,
       ),
     );
   }
@@ -133,7 +133,7 @@ class _ShoesScreenState extends State<ShoesScreen> {
           children: [
             const SizedBox(height: 12),
             Text(
-              'Shoes',
+              'Sales',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -147,11 +147,11 @@ class _ShoesScreenState extends State<ShoesScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  {'label': 'Sales', 'screen': SalesScreen(name: widget.name)},
+                  {'label': 'Sales', 'screen': null},
                   {'label': 'Shirts', 'screen': ShirtScreen(name: widget.name)},
                   {'label': 'Pants', 'screen': PantsScreen(name: widget.name)},
                   {'label': 'Dresses', 'screen': DressScreen(name: widget.name)},
-                  {'label': 'Shoes', 'screen': null},
+                  {'label': 'Shoes', 'screen': ShoesScreen(name: widget.name)},
                 ].map((item) {
                   final isCurrent = item['screen'] == null;
                   return Padding(

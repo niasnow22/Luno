@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
-import 'account_page.dart';
-import 'sales_screen.dart';
-import 'shirts_screen.dart';
-import 'pants_screen.dart';
-import 'shoes_screen.dart';
+import 'package:luno/explore_pages/dress_items/dress_screen.dart';
+import '../../home_screen.dart';
+import '../../account_page.dart';
+import '../sales_items/sales_screen.dart';
+import '../pants_items/pants_screen.dart';
+import '../shoes_items/shoes_screen.dart';
 
 class Product {
   final String name;
@@ -20,16 +20,16 @@ class Product {
   });
 }
 
-class DressScreen extends StatefulWidget {
+class ShirtScreen extends StatefulWidget {
   final String name;
 
-  const DressScreen({super.key, required this.name});
+  const ShirtScreen({super.key, required this.name});
 
   @override
-  State<DressScreen> createState() => _DressScreenState();
+  State<ShirtScreen> createState() => _ShirtScreenState();
 }
 
-class _DressScreenState extends State<DressScreen> {
+class _ShirtScreenState extends State<ShirtScreen> {
   String _selectedSort = 'Popularity';
   RangeValues _selectedPriceRange = const RangeValues(0, 100);
 
@@ -46,12 +46,12 @@ class _DressScreenState extends State<DressScreen> {
   void initState() {
     super.initState();
     products = List.generate(
-      10,
+      4,
       (index) => Product(
-        name: 'Dress ${index + 1}',
-        price: 20.0 + index * 8,
+        name: 'Shirt ${index + 1}',
+        price: 18.0 + index * 6,
         dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 100 - index * 7,
+        popularity: 95 - index * 6,
       ),
     );
   }
@@ -77,6 +77,7 @@ class _DressScreenState extends State<DressScreen> {
         filtered.sort((a, b) => b.popularity.compareTo(a.popularity));
         break;
     }
+
     return filtered;
   }
 
@@ -107,7 +108,7 @@ class _DressScreenState extends State<DressScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      setState(() {}); // Apply filter
+                      setState(() {});
                       Navigator.pop(context);
                     },
                     child: const Text('Apply'),
@@ -132,7 +133,7 @@ class _DressScreenState extends State<DressScreen> {
           children: [
             const SizedBox(height: 12),
             Text(
-              'Dresses',
+              'Shirts',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -147,9 +148,9 @@ class _DressScreenState extends State<DressScreen> {
               child: Row(
                 children: [
                   {'label': 'Sales', 'screen': SalesScreen(name: widget.name)},
-                  {'label': 'Shirts', 'screen': ShirtScreen(name: widget.name)},
+                  {'label': 'Shirts', 'screen': null},
                   {'label': 'Pants', 'screen': PantsScreen(name: widget.name)},
-                  {'label': 'Dresses', 'screen': null}, // current screen
+                  {'label': 'Dresses', 'screen': DressScreen(name: widget.name)},
                   {'label': 'Shoes', 'screen': ShoesScreen(name: widget.name)},
                 ].map((item) {
                   final isCurrent = item['screen'] == null;

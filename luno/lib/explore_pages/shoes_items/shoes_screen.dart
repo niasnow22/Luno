@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:luno/dress_screen.dart';
-import 'home_screen.dart';
-import 'account_page.dart';
-import 'sales_screen.dart';
-import 'pants_screen.dart';
-import 'shoes_screen.dart';
+import 'package:luno/explore_pages/dress_items/dress_screen.dart';
+import '../../home_screen.dart';
+import '../../account_page.dart';
+import '../sales_items/sales_screen.dart';
+import '../shirts_items/shirts_screen.dart';
+import '../pants_items/pants_screen.dart';
 
 class Product {
   final String name;
@@ -20,16 +20,16 @@ class Product {
   });
 }
 
-class ShirtScreen extends StatefulWidget {
+class ShoesScreen extends StatefulWidget {
   final String name;
 
-  const ShirtScreen({super.key, required this.name});
+  const ShoesScreen({super.key, required this.name});
 
   @override
-  State<ShirtScreen> createState() => _ShirtScreenState();
+  State<ShoesScreen> createState() => _ShoesScreenState();
 }
 
-class _ShirtScreenState extends State<ShirtScreen> {
+class _ShoesScreenState extends State<ShoesScreen> {
   String _selectedSort = 'Popularity';
   RangeValues _selectedPriceRange = const RangeValues(0, 100);
 
@@ -46,12 +46,12 @@ class _ShirtScreenState extends State<ShirtScreen> {
   void initState() {
     super.initState();
     products = List.generate(
-      10,
+      4,
       (index) => Product(
-        name: 'Shirt ${index + 1}',
-        price: 18.0 + index * 6,
+        name: 'Shoe ${index + 1}',
+        price: 30.0 + index * 7,
         dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 95 - index * 6,
+        popularity: 85 - index * 5,
       ),
     );
   }
@@ -133,7 +133,7 @@ class _ShirtScreenState extends State<ShirtScreen> {
           children: [
             const SizedBox(height: 12),
             Text(
-              'Shirts',
+              'Shoes',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -148,10 +148,10 @@ class _ShirtScreenState extends State<ShirtScreen> {
               child: Row(
                 children: [
                   {'label': 'Sales', 'screen': SalesScreen(name: widget.name)},
-                  {'label': 'Shirts', 'screen': null},
+                  {'label': 'Shirts', 'screen': ShirtScreen(name: widget.name)},
                   {'label': 'Pants', 'screen': PantsScreen(name: widget.name)},
                   {'label': 'Dresses', 'screen': DressScreen(name: widget.name)},
-                  {'label': 'Shoes', 'screen': ShoesScreen(name: widget.name)},
+                  {'label': 'Shoes', 'screen': null},
                 ].map((item) {
                   final isCurrent = item['screen'] == null;
                   return Padding(
