@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:luno/explore_pages/dress_items/dress_screen.dart';
-import '../../home_screen.dart';
-import '../../account_page.dart';
-import '../sales_items/sales_screen.dart';
+import 'package:luno/explore_pages/sales_items/sales_screen.dart';
+import 'package:luno/home_screen.dart';
+import 'package:luno/account_page.dart';
+import 'package:luno/explore_pages/shirts_items/shirts_item1.dart';
+import 'package:luno/explore_pages/shirts_items/shirts_item2.dart';
+import 'package:luno/explore_pages/shirts_items/shirts_item3.dart';
+import 'package:luno/explore_pages/shirts_items/shirts_item4.dart';
 import '../pants_items/pants_screen.dart';
 import '../shoes_items/shoes_screen.dart';
+import '../dress_items/dress_screen.dart';
 
 class Product {
   final String name;
   final double price;
   final DateTime dateAdded;
   final int popularity;
+  final String imagePath;
 
   Product({
     required this.name,
     required this.price,
     required this.dateAdded,
     required this.popularity,
+    required this.imagePath,
   });
 }
 
@@ -45,15 +51,36 @@ class _ShirtScreenState extends State<ShirtScreen> {
   @override
   void initState() {
     super.initState();
-    products = List.generate(
-      4,
-      (index) => Product(
-        name: 'Shirt ${index + 1}',
-        price: 18.0 + index * 6,
-        dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 95 - index * 6,
+    products = [
+      Product(
+        name: 'Cropped Sweater',
+        price: 20.00,
+        dateAdded: DateTime.now(),
+        popularity: 90,
+        imagePath: 'assets/images/shirt_1.png',
       ),
-    );
+      Product(
+        name: 'Off the Shoulder',
+        price: 25.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 1)),
+        popularity: 83,
+        imagePath: 'assets/images/shirt_2.png',
+      ),
+      Product(
+        name: 'Camisol',
+        price: 22.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        popularity: 76,
+        imagePath: 'assets/images/shirt_3.png',
+      ),
+      Product(
+        name: 'Black Shirt',
+        price: 18.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 3)),
+        popularity: 69,
+        imagePath: 'assets/images/shirt_4.png',
+      ),
+    ];
   }
 
   List<Product> get filteredAndSortedProducts {
@@ -72,7 +99,6 @@ class _ShirtScreenState extends State<ShirtScreen> {
       case 'Newest':
         filtered.sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
         break;
-      case 'Popularity':
       default:
         filtered.sort((a, b) => b.popularity.compareTo(a.popularity));
         break;
@@ -140,9 +166,8 @@ class _ShirtScreenState extends State<ShirtScreen> {
                 color: accentColor,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
-            // Horizontal category navigation
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -183,7 +208,9 @@ class _ShirtScreenState extends State<ShirtScreen> {
 
             const SizedBox(height: 16),
 
-            // Sort & Filter row
+
+
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -225,7 +252,6 @@ class _ShirtScreenState extends State<ShirtScreen> {
 
             const SizedBox(height: 16),
 
-            // Product Grid
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(16),
@@ -238,15 +264,38 @@ class _ShirtScreenState extends State<ShirtScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final product = filteredAndSortedProducts[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: Container(color: Colors.grey[300])),
-                      const SizedBox(height: 8),
-                      Text(product.name),
-                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                      Text('Popularity: ${product.popularity}'),
-                    ],
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (product.name == 'Cropped Sweater') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShirtsItem1Screen(name: widget.name)));
+                      } else if (product.name == 'Off the Shoulder') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShirtsItem2Screen(name: widget.name)));
+                      } else if (product.name == 'Camisol') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShirtsItem3Screen(name: widget.name)));
+                      } else if (product.name == 'Balck Shirt') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShirtsItem4Screen(name: widget.name)));
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              product.imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('Price: \$${product.price.toStringAsFixed(2)}'),
+                        Text('Popularity: ${product.popularity}'),
+                      ],
+                    ),
                   );
                 },
               ),

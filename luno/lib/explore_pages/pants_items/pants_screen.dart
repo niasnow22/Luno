@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:luno/explore_pages/dress_items/dress_screen.dart';
-import '../../home_screen.dart';
-import '../../account_page.dart';
+import 'package:luno/home_screen.dart';
+import 'package:luno/account_page.dart';
 import '../sales_items/sales_screen.dart';
+import '../dress_items/dress_screen.dart';
 import '../shirts_items/shirts_screen.dart';
 import '../shoes_items/shoes_screen.dart';
+import 'pants_item1.dart';
+import 'pants_item2.dart';
+import 'pants_item3.dart';
+import 'pants_item4.dart';
 
 class Product {
   final String name;
   final double price;
   final DateTime dateAdded;
   final int popularity;
+  final String imagePath;
 
   Product({
     required this.name,
     required this.price,
     required this.dateAdded,
     required this.popularity,
+    required this.imagePath,
   });
 }
 
@@ -45,15 +51,36 @@ class _PantsScreenState extends State<PantsScreen> {
   @override
   void initState() {
     super.initState();
-    products = List.generate(
-      4,
-      (index) => Product(
-        name: 'Pant ${index + 1}',
-        price: 25.0 + index * 9,
-        dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 90 - index * 5,
+    products = [
+      Product(
+        name: 'Slacks',
+        price: 32.0,
+        dateAdded: DateTime.now(),
+        popularity: 100,
+        imagePath: 'assets/images/pants_1.png',
       ),
-    );
+      Product(
+        name: 'Jean Shorts',
+        price: 28.0,
+        dateAdded: DateTime.now().subtract(const Duration(days: 1)),
+        popularity: 90,
+        imagePath: 'assets/images/pants_2.png',
+      ),
+      Product(
+        name: 'Skirt',
+        price: 24.0,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        popularity: 80,
+        imagePath: 'assets/images/pants_3.png',
+      ),
+      Product(
+        name: 'Jeans',
+        price: 30.0,
+        dateAdded: DateTime.now().subtract(const Duration(days: 3)),
+        popularity: 70,
+        imagePath: 'assets/images/pants_4.png',
+      ),
+    ];
   }
 
   List<Product> get filteredAndSortedProducts {
@@ -72,11 +99,11 @@ class _PantsScreenState extends State<PantsScreen> {
       case 'Newest':
         filtered.sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
         break;
-      case 'Popularity':
       default:
         filtered.sort((a, b) => b.popularity.compareTo(a.popularity));
         break;
     }
+
     return filtered;
   }
 
@@ -91,7 +118,9 @@ class _PantsScreenState extends State<PantsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Filter by Price', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text('Filter by Price',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   RangeSlider(
                     values: _selectedPriceRange,
                     min: 0,
@@ -134,14 +163,13 @@ class _PantsScreenState extends State<PantsScreen> {
             Text(
               'Pants',
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: accentColor,
-              ),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: accentColor),
             ),
             const SizedBox(height: 12),
 
-            // Horizontal category navigation
+            // Category Row
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -171,7 +199,8 @@ class _PantsScreenState extends State<PantsScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           color: isCurrent ? accentColor : Colors.black,
-                          fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                          fontWeight:
+                              isCurrent ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -182,7 +211,7 @@ class _PantsScreenState extends State<PantsScreen> {
 
             const SizedBox(height: 16),
 
-            // Sort & Filter row
+            // Sort & Filter Row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -237,15 +266,60 @@ class _PantsScreenState extends State<PantsScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final product = filteredAndSortedProducts[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: Container(color: Colors.grey[300])),
-                      const SizedBox(height: 8),
-                      Text(product.name),
-                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                      Text('Popularity: ${product.popularity}'),
-                    ],
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (product.name == 'Slacks') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  PantsItem1Screen(name: widget.name)),
+                        );
+                      } else if (product.name == 'Jean Shorts') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  PantsItem2Screen(name: widget.name)),
+                        );
+                      } else if (product.name == 'Skirt') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  PantsItem3Screen(name: widget.name)),
+                        );
+                      } else if (product.name == 'Jeans') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  PantsItem4Screen(name: widget.name)),
+                        );
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              product.imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(product.name,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('Price: \$${product.price.toStringAsFixed(2)}'),
+                        Text('Popularity: ${product.popularity}'),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -253,6 +327,8 @@ class _PantsScreenState extends State<PantsScreen> {
           ],
         ),
       ),
+
+      // Bottom Nav
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: accentColor,
         unselectedItemColor: Colors.grey,
@@ -262,20 +338,24 @@ class _PantsScreenState extends State<PantsScreen> {
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen(name: widget.name)),
+              MaterialPageRoute(
+                  builder: (context) => HomeScreen(name: widget.name)),
             );
           } else if (index == 4) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => AccountScreen(name: widget.name)),
+              MaterialPageRoute(
+                  builder: (context) => AccountScreen(name: widget.name)),
             );
           }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorites'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: 'Cart'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border), label: 'Favorites'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
         ],
       ),

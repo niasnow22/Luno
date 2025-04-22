@@ -5,18 +5,24 @@ import '../../account_page.dart';
 import '../shirts_items/shirts_screen.dart';
 import '../pants_items/pants_screen.dart';
 import '../shoes_items/shoes_screen.dart';
+import 'sales_item1.dart';
+import 'sales_items2.dart';
+import 'sales_item3.dart';
+import 'sales_item4.dart';
 
 class Product {
   final String name;
   final double price;
   final DateTime dateAdded;
   final int popularity;
+  final String imagePath;
 
   Product({
     required this.name,
     required this.price,
     required this.dateAdded,
     required this.popularity,
+    required this.imagePath,
   });
 }
 
@@ -45,15 +51,36 @@ class _SalesScreenState extends State<SalesScreen> {
   @override
   void initState() {
     super.initState();
-    products = List.generate(
-      4,
-      (index) => Product(
-        name: 'Sale Item ${index + 1}',
-        price: 15.0 + index * 5,
-        dateAdded: DateTime.now().subtract(Duration(days: index)),
-        popularity: 100 - index * 8,
+    products = [
+      Product(
+        name: 'Flower Sweater',
+        price: 32.00,
+        dateAdded: DateTime.now(),
+        popularity: 100,
+        imagePath: 'assets/images/sales_1.png',
       ),
-    );
+      Product(
+        name: 'Strappy Romper',
+        price: 36.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 1)),
+        popularity: 90,
+        imagePath: 'assets/images/sales_2.png',
+      ),
+      Product(
+        name: 'Leather Fur Jacket',
+        price: 40.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        popularity: 80,
+        imagePath: 'assets/images/sales_3.png',
+      ),
+      Product(
+        name: 'Leather Pea Coat',
+        price: 50.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 3)),
+        popularity: 70,
+        imagePath: 'assets/images/sales_4.png',
+      ),
+    ];
   }
 
   List<Product> get filteredAndSortedProducts {
@@ -72,7 +99,6 @@ class _SalesScreenState extends State<SalesScreen> {
       case 'Newest':
         filtered.sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
         break;
-      case 'Popularity':
       default:
         filtered.sort((a, b) => b.popularity.compareTo(a.popularity));
         break;
@@ -142,7 +168,6 @@ class _SalesScreenState extends State<SalesScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Horizontal category navigation
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -183,7 +208,6 @@ class _SalesScreenState extends State<SalesScreen> {
 
             const SizedBox(height: 16),
 
-            // Sort & Filter row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -225,7 +249,6 @@ class _SalesScreenState extends State<SalesScreen> {
 
             const SizedBox(height: 16),
 
-            // Product Grid
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(16),
@@ -238,15 +261,38 @@ class _SalesScreenState extends State<SalesScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final product = filteredAndSortedProducts[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: Container(color: Colors.grey[300])),
-                      const SizedBox(height: 8),
-                      Text(product.name),
-                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                      Text('Popularity: ${product.popularity}'),
-                    ],
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (product.name == 'Flower Sweater') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => SalesItem1Screen(name: widget.name)));
+                      } else if (product.name == 'Strappy Romper') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => SalesItem2Screen(name: widget.name)));
+                      } else if (product.name == 'Leather Fur Jacket') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => SalesItem3Screen(name: widget.name)));
+                      } else if (product.name == 'Leather Pea Coat') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => SalesItem4Screen(name: widget.name)));
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              product.imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('Price: \$${product.price.toStringAsFixed(2)}'),
+                        Text('Popularity: ${product.popularity}'),
+                      ],
+                    ),
                   );
                 },
               ),

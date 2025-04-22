@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:luno/home_screen.dart';
+import 'package:luno/account_page.dart';
+import 'package:luno/explore_pages/shirts_items/shirts_screen.dart';
+import 'package:luno/explore_pages/pants_items/pants_screen.dart';
 import 'package:luno/explore_pages/dress_items/dress_screen.dart';
-import '../../home_screen.dart';
-import '../../account_page.dart';
-import '../sales_items/sales_screen.dart';
-import '../shirts_items/shirts_screen.dart';
-import '../pants_items/pants_screen.dart';
+import 'package:luno/explore_pages/sales_items/sales_screen.dart';
+import 'shoes_item1.dart';
+import 'shoes_item2.dart';
+import 'shoes_item3.dart';
+import 'shoes_item4.dart';
 
 class Product {
   final String name;
   final double price;
   final DateTime dateAdded;
   final int popularity;
+  final String imagePath;
 
   Product({
     required this.name,
     required this.price,
     required this.dateAdded,
     required this.popularity,
+    required this.imagePath,
   });
 }
 
@@ -45,15 +51,36 @@ class _ShoesScreenState extends State<ShoesScreen> {
   @override
   void initState() {
     super.initState();
-    products = List.generate(
-      4,
-      (index) => Product(
-        name: 'Shoe ${index + 1}',
-        price: 30.0 + index * 7,
-        dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 85 - index * 5,
+    products = [
+      Product(
+        name: 'Blue Kitten Heels',
+        price: 20.0,
+        dateAdded: DateTime.now(),
+        popularity: 90,
+        imagePath: 'assets/images/shoes_1.png',
       ),
-    );
+      Product(
+        name: 'Black Bow Heels',
+        price: 30.0,
+        dateAdded: DateTime.now().subtract(const Duration(days: 1)),
+        popularity: 80,
+        imagePath: 'assets/images/shoes_2.png',
+      ),
+      Product(
+        name: 'Opened Toed Heels',
+        price: 40.0,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        popularity: 70,
+        imagePath: 'assets/images/shoes_3.png',
+      ),
+      Product(
+        name: 'High Heeled Boots',
+        price: 50.0,
+        dateAdded: DateTime.now().subtract(const Duration(days: 3)),
+        popularity: 60,
+        imagePath: 'assets/images/shoes_4.png',
+      ),
+    ];
   }
 
   List<Product> get filteredAndSortedProducts {
@@ -72,7 +99,6 @@ class _ShoesScreenState extends State<ShoesScreen> {
       case 'Newest':
         filtered.sort((a, b) => b.dateAdded.compareTo(a.dateAdded));
         break;
-      case 'Popularity':
       default:
         filtered.sort((a, b) => b.popularity.compareTo(a.popularity));
         break;
@@ -134,15 +160,11 @@ class _ShoesScreenState extends State<ShoesScreen> {
             const SizedBox(height: 12),
             Text(
               'Shoes',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: accentColor,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: accentColor),
             ),
             const SizedBox(height: 12),
 
-            // Horizontal category navigation
+            // Navigation Tabs
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -161,9 +183,7 @@ class _ShoesScreenState extends State<ShoesScreen> {
                         if (!isCurrent) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => item['screen'] as Widget,
-                            ),
+                            MaterialPageRoute(builder: (context) => item['screen'] as Widget),
                           );
                         }
                       },
@@ -183,7 +203,7 @@ class _ShoesScreenState extends State<ShoesScreen> {
 
             const SizedBox(height: 16),
 
-            // Sort & Filter row
+            // Sort & Filter
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -238,15 +258,37 @@ class _ShoesScreenState extends State<ShoesScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final product = filteredAndSortedProducts[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: Container(color: Colors.grey[300])),
-                      const SizedBox(height: 8),
-                      Text(product.name),
-                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                      Text('Popularity: ${product.popularity}'),
-                    ],
+                  return GestureDetector(
+                    onTap: () {
+                      if (product.name == 'Blue Kitten Heels') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShoesItem1Screen(name: widget.name)));
+                      } else if (product.name == 'Black Bow Heels') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShoesItem2Screen(name: widget.name)));
+                      } else if (product.name == 'Opened Toed Heels') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShoesItem3Screen(name: widget.name)));
+                      } else if (product.name == 'High Heeled Boots') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => ShoesItem4Screen(name: widget.name)));
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              product.imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('Price: \$${product.price.toStringAsFixed(2)}'),
+                        Text('Popularity: ${product.popularity}'),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -254,6 +296,8 @@ class _ShoesScreenState extends State<ShoesScreen> {
           ],
         ),
       ),
+
+      // Bottom Nav
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: accentColor,
         unselectedItemColor: Colors.grey,

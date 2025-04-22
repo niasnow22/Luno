@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'signup_screen.dart';
 import 'home_screen.dart';
-import '../models/user.dart';
 import '../db/sembast_user_database.dart';
 
 class LoginScreen extends StatefulWidget {

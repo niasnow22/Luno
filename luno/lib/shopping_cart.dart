@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
-import 'account_page.dart';
-import 'search_screen.dart';
+import 'package:luno/home_screen.dart';
+import 'package:luno/account_page.dart';
+import 'package:luno/search_screen.dart';
+import 'package:luno/db/cart_database.dart';
 
 class ShoppingCart extends StatefulWidget {
   final String name;
+  final Map<String, dynamic>? newItem;
 
-  const ShoppingCart({super.key, required this.name});
+  const ShoppingCart({super.key, required this.name, this.newItem});
 
   @override
   State<ShoppingCart> createState() => _ShoppingCartState();
@@ -14,26 +16,37 @@ class ShoppingCart extends StatefulWidget {
 
 class _ShoppingCartState extends State<ShoppingCart> {
   final Color accentColor = const Color(0xFF00C28D);
-
   List<Map<String, dynamic>> cartItems = [];
+  List<int> itemKeys = [];
 
-  void _addItems() {
+  @override
+  void initState() {
+    super.initState();
+    _initCart();
+  }
+
+  Future<void> _initCart() async {
+    if (widget.newItem != null) {
+      await CartDatabase.instance.addItem(widget.newItem!);
+    }
+    await _loadCart();
+  }
+
+  Future<void> _loadCart() async {
+    final items = await CartDatabase.instance.getItems();
+    final keys = await CartDatabase.instance.getRawKeys();
     setState(() {
-      cartItems.add({
-        'name': 'Item ${cartItems.length + 1}',
-        'size': 'M',
-        'price': 20.0 + (cartItems.length * 5), // just demo prices
-      });
+      cartItems = items;
+      itemKeys = keys;
     });
   }
 
-  void _removeItem(int index) {
-    setState(() {
-      cartItems.removeAt(index);
-    });
+  Future<void> _removeItem(int index) async {
+    await CartDatabase.instance.removeItem(itemKeys[index]);
+    await _loadCart();
   }
 
-  double get total => cartItems.fold(0, (sum, item) => sum + item['price']);
+  double get total => cartItems.fold(0, (sum, item) => sum + (item['price'] ?? 0));
   double get taxes => total * 0.07;
   double get shipping => total >= 50 ? 0.0 : 5.0;
   double get subtotal => total + taxes + shipping;
@@ -61,7 +74,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 ),
                 const SizedBox(height: 16),
 
-                // Cart Items
+                if (cartItems.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Center(child: Text("Your cart is empty")),
+                  ),
+
                 ...cartItems.asMap().entries.map((entry) {
                   int index = entry.key;
                   Map<String, dynamic> item = entry.value;
@@ -70,11 +88,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
                       children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          color: Colors.grey[300],
-                        ),
+                        Container(width: 70, height: 70, color: Colors.grey[300]),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -82,6 +96,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             children: [
                               Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text('Size: ${item['size']}', style: const TextStyle(color: Colors.black54)),
+                              if (item.containsKey('color'))
+                                Text('Color: ${item['color']}', style: const TextStyle(color: Colors.black54)),
                             ],
                           ),
                         ),
@@ -102,15 +118,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   );
                 }),
 
-                if (cartItems.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32),
-                    child: Center(child: Text("Your cart is empty")),
-                  ),
-
-                const SizedBox(height: 16),
-
-                // Totals
                 if (cartItems.isNotEmpty)
                   Column(
                     children: [
@@ -129,7 +136,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                           ),
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Proceeding to Checkout with \$${subtotal.toStringAsFixed(2)}')),
+                              SnackBar(content: Text('Checkout total: \$${subtotal.toStringAsFixed(2)}')),
                             );
                           },
                           child: const Text('Check Out'),
@@ -137,29 +144,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       ),
                     ],
                   ),
-
-                const SizedBox(height: 24),
-
-                // Add Item Button
-                Center(
-                  child: OutlinedButton.icon(
-                    onPressed: _addItems,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Item'),
-                  ),
-                ),
               ],
             ),
           ),
         ),
       ),
-
-      // Bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: accentColor,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
-        currentIndex: 2, // Cart tab
+        currentIndex: 2,
         onTap: (index) {
           switch (index) {
             case 0:
@@ -182,7 +176,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               );
               break;
             case 4:
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => AccountScreen(name: widget.name)),
               );

@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
-import '../../home_screen.dart';
-import '../../account_page.dart';
-import '../sales_items/sales_screen.dart';
+import 'package:luno/home_screen.dart';
+import 'package:luno/account_page.dart';
+import 'dress_item1.dart';
+import 'dress_item2.dart';
+import 'dress_item3.dart';
+import 'dress_item4.dart';
 import '../shirts_items/shirts_screen.dart';
 import '../pants_items/pants_screen.dart';
 import '../shoes_items/shoes_screen.dart';
+import '../sales_items/sales_screen.dart';
 
 class Product {
   final String name;
   final double price;
   final DateTime dateAdded;
   final int popularity;
+  final String imagePath;
 
   Product({
     required this.name,
     required this.price,
     required this.dateAdded,
     required this.popularity,
+    required this.imagePath,
   });
 }
 
 class DressScreen extends StatefulWidget {
   final String name;
-
   const DressScreen({super.key, required this.name});
 
   @override
@@ -45,15 +50,36 @@ class _DressScreenState extends State<DressScreen> {
   @override
   void initState() {
     super.initState();
-    products = List.generate(
-      4,
-      (index) => Product(
-        name: 'Dress ${index + 1}',
-        price: 20.0 + index * 8,
-        dateAdded: DateTime.now().subtract(Duration(days: index * 2)),
-        popularity: 100 - index * 7,
+    products = [
+      Product(
+        name: 'Scalloped Flowers Dress',
+        price: 25.00,
+        dateAdded: DateTime.now(),
+        popularity: 100,
+        imagePath: 'assets/images/dress_1.png',
       ),
-    );
+      Product(
+        name: 'Striped Dress',
+        price: 35.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 1)),
+        popularity: 90,
+        imagePath: 'assets/images/dress_2.png',
+      ),
+      Product(
+        name: 'Plaid Dress',
+        price: 35.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 2)),
+        popularity: 80,
+        imagePath: 'assets/images/dress_3.png',
+      ),
+      Product(
+        name: 'Flower Dress',
+        price: 30.00,
+        dateAdded: DateTime.now().subtract(const Duration(days: 3)),
+        popularity: 70,
+        imagePath: 'assets/images/dress_4.png',
+      ),
+    ];
   }
 
   List<Product> get filteredAndSortedProducts {
@@ -77,6 +103,7 @@ class _DressScreenState extends State<DressScreen> {
         filtered.sort((a, b) => b.popularity.compareTo(a.popularity));
         break;
     }
+
     return filtered;
   }
 
@@ -107,7 +134,7 @@ class _DressScreenState extends State<DressScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      setState(() {}); // Apply filter
+                      setState(() {});
                       Navigator.pop(context);
                     },
                     child: const Text('Apply'),
@@ -131,17 +158,9 @@ class _DressScreenState extends State<DressScreen> {
         child: Column(
           children: [
             const SizedBox(height: 12),
-            Text(
-              'Dresses',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: accentColor,
-              ),
-            ),
+            Text('Dresses', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: accentColor)),
             const SizedBox(height: 12),
 
-            // Horizontal category navigation
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -149,7 +168,7 @@ class _DressScreenState extends State<DressScreen> {
                   {'label': 'Sales', 'screen': SalesScreen(name: widget.name)},
                   {'label': 'Shirts', 'screen': ShirtScreen(name: widget.name)},
                   {'label': 'Pants', 'screen': PantsScreen(name: widget.name)},
-                  {'label': 'Dresses', 'screen': null}, // current screen
+                  {'label': 'Dresses', 'screen': null},
                   {'label': 'Shoes', 'screen': ShoesScreen(name: widget.name)},
                 ].map((item) {
                   final isCurrent = item['screen'] == null;
@@ -160,9 +179,7 @@ class _DressScreenState extends State<DressScreen> {
                         if (!isCurrent) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => item['screen'] as Widget,
-                            ),
+                            MaterialPageRoute(builder: (context) => item['screen'] as Widget),
                           );
                         }
                       },
@@ -182,7 +199,6 @@ class _DressScreenState extends State<DressScreen> {
 
             const SizedBox(height: 16),
 
-            // Sort & Filter row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -211,11 +227,7 @@ class _DressScreenState extends State<DressScreen> {
                   GestureDetector(
                     onTap: _openFilterModal,
                     child: const Row(
-                      children: [
-                        Icon(Icons.filter_list),
-                        SizedBox(width: 4),
-                        Text('Filter'),
-                      ],
+                      children: [Icon(Icons.filter_list), SizedBox(width: 4), Text('Filter')],
                     ),
                   ),
                 ],
@@ -224,7 +236,6 @@ class _DressScreenState extends State<DressScreen> {
 
             const SizedBox(height: 16),
 
-            // Product Grid
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(16),
@@ -237,15 +248,38 @@ class _DressScreenState extends State<DressScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final product = filteredAndSortedProducts[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: Container(color: Colors.grey[300])),
-                      const SizedBox(height: 8),
-                      Text(product.name),
-                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                      Text('Popularity: ${product.popularity}'),
-                    ],
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (product.name == 'Scalloped Flowers Dress') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => DressItem1Screen(name: widget.name)));
+                      } else if (product.name == 'Striped Dress') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => DressItem2Screen(name: widget.name)));
+                      } else if (product.name == 'Plaid Dress') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => DressItem3Screen(name: widget.name)));
+                      } else if (product.name == 'Flower Dress') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => DressItem4Screen(name: widget.name)));
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              product.imagePath,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text('Price: \$${product.price.toStringAsFixed(2)}'),
+                        Text('Popularity: ${product.popularity}'),
+                      ],
+                    ),
                   );
                 },
               ),
