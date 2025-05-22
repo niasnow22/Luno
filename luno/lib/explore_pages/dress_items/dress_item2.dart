@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:luno/db/favorites_data.dart';
 import 'package:luno/home_screen.dart';
 import 'package:luno/account_page.dart';
 import 'package:luno/search_screen.dart';
 import 'package:luno/shopping_cart.dart';
-import 'package:luno/db/cart_database.dart'; // make sure this exists
+import 'package:luno/db/cart_database.dart';
+import 'package:luno/models/product.dart' as model;
+import 'package:luno/favorites_screens.dart';
 import 'dress_screen.dart';
 
 class DressItem2Screen extends StatefulWidget {
@@ -21,9 +24,51 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
 
   String selectedColor = 'Black';
   String selectedSize = 'Small';
+  bool isFavorite = false;
 
   final List<String> colors = ['Black', 'White', 'Red'];
   final List<String> sizes = ['Small', 'Medium', 'Large'];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavoriteStatus();
+  }
+
+  Future<void> _checkFavoriteStatus() async {
+    bool status = await FavoriteDatabase.instance.isFavorite('Striped Dress');
+    setState(() {
+      isFavorite = status;
+    });
+  }
+
+  Future<void> _toggleFavorite() async {
+    final product = model.Product(
+      name: 'Striped Dress',
+      price: 35.00,
+      dateAdded: DateTime.now(),
+      popularity: 80,
+      imagePath: 'assets/images/dress_2.png',
+      size: selectedSize,
+      color: selectedColor,
+    );
+
+    if (isFavorite) {
+      await FavoriteDatabase.instance.removeFavorite(product.name);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Removed from favorites")),
+      );
+    } else {
+      await FavoriteDatabase.instance.addFavorite(product);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Added to favorites")),
+      );
+    }
+
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+  }
 
   Future<void> _addToCart() async {
     await CartDatabase.instance.addItem({
@@ -49,25 +94,25 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DressScreen(name: widget.name),
-                          ),
-                        );
-                      },
-                    ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DressScreen(name: widget.name),
+                        ),
+                      );
+                    },
                   ),
-                  const Text(
-                    'Striped Dress',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-
+                ),
+                const Text(
+                  'Striped Dress',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
                 AspectRatio(
                   aspectRatio: 0.75,
                   child: ClipRRect(
@@ -84,7 +129,6 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 24),
-
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text('Color', style: TextStyle(fontSize: 16)),
@@ -93,9 +137,7 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
                 _buildOptionSelector(colors, selectedColor, (val) {
                   setState(() => selectedColor = val);
                 }),
-
                 const SizedBox(height: 20),
-
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text('Size', style: TextStyle(fontSize: 16)),
@@ -104,9 +146,7 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
                 _buildOptionSelector(sizes, selectedSize, (val) {
                   setState(() => selectedSize = val);
                 }),
-
                 const SizedBox(height: 24),
-
                 Row(
                   children: [
                     Container(
@@ -117,12 +157,11 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.favorite_border, color: accentColor),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Added to favorites")),
-                          );
-                        },
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: accentColor,
+                        ),
+                        onPressed: _toggleFavorite,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -145,7 +184,6 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
           ),
         ),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: accentColor,
         unselectedItemColor: Colors.grey,
@@ -169,6 +207,12 @@ class _DressItem2ScreenState extends State<DressItem2Screen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => ShoppingCart(name: widget.name)),
+              );
+              break;
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => FavoritesScreen(name: widget.name)),
               );
               break;
             case 4:

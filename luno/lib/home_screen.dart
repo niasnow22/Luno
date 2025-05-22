@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:luno/explore_pages/sales_items/sales_screen.dart';
+import 'package:luno/favorites_screens.dart';
 import 'search_screen.dart';
 import 'explore_pages/shirts_items/shirts_screen.dart';
 import 'explore_pages/pants_items/pants_screen.dart';
@@ -187,8 +188,9 @@ class HomeScreen extends StatelessWidget {
         );
         break;
       case 3:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Favorites coming soon')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => FavoritesScreen(name: name)),
         );
         break;
       case 4:

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:luno/db/cart_database.dart'; // adjust path if needed
+import 'package:luno/db/cart_database.dart';
+import 'package:luno/db/favorites_data.dart'; // ✅ Correct path to favorite_database.dart
 import 'splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await CartDatabase.instance.init(); // Make sure the DB is ready
+
+  // Initialize Sembast databases
+  await CartDatabase.instance.init();
+  await FavoriteDatabase.instance.init(); // ✅ Initialize favorites DB
+
   runApp(const Luno());
 }
 
@@ -13,9 +18,9 @@ class Luno extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: SplashScreen(),
     );
   }
 }
